@@ -6,6 +6,14 @@ import (
 	"io"
 )
 
+type MimeType string
+
+const (
+	VideoMP4MimeType MimeType = "video/mp4"
+	AudioMP4MimeType MimeType = "audio/mp4"
+	VTTMimeType      MimeType = "text/vtt"
+)
+
 type AdaptationSet struct {
 	Items                     []string           `xml:",any"`
 	FramePacking              []Descriptor       `xml:"FramePacking,omitempty"`
@@ -43,7 +51,7 @@ type AdaptationSet struct {
 	Sar                       Ratio              `xml:"sar,attr,omitempty"`
 	FrameRate                 FrameRate          `xml:"frameRate,attr,omitempty"`
 	AudioSamplingRate         string             `xml:"audioSamplingRate,attr,omitempty"`
-	MimeType                  string             `xml:"mimeType,attr,omitempty"`
+	MimeType                  MimeType           `xml:"mimeType,attr,omitempty"`
 	SegmentProfiles           string             `xml:"segmentProfiles,attr,omitempty"`
 	Codecs                    string             `xml:"codecs,attr,omitempty"`
 	MaximumSAPPeriod          float64            `xml:"maximumSAPPeriod,attr,omitempty"`
@@ -163,6 +171,17 @@ type SCTE35Signal struct {
 // FrameRate must match the pattern `[0-9]*[0-9](/[0-9]*[0-9])?`.
 type FrameRate string
 
+type Profile string
+
+const (
+	ISOFFLive2011Profile     Profile = "urn:mpeg:dash:profile:isoff-live:2011"
+	ISOFFOnDemand2011Profile Profile = "urn:mpeg:dash:profile:isoff-on-demand:2011"
+)
+
+type Namespace string
+
+const MPD2011Namespace Namespace = "urn:mpeg:dash:schema:mpd:2011"
+
 type MPD struct {
 	Items                      []string     `xml:",any"`
 	BaseURL                    []BaseURL    `xml:"BaseURL,omitempty"`
@@ -172,8 +191,8 @@ type MPD struct {
 	EssentialProperty          []Descriptor `xml:"EssentialProperty,omitempty"`
 	SupplementalProperty       []Descriptor `xml:"SupplementalProperty,omitempty"`
 	UTCTiming                  []Descriptor `xml:"UTCTiming,omitempty"`
-	XMLNS                      string       `xml:"xmlns,attr,omitempty"`
-	Profiles                   string       `xml:"profiles,attr"`
+	XMLNS                      Namespace    `xml:"xmlns,attr,omitempty"`
+	Profiles                   Profile      `xml:"profiles,attr"`
 	Type                       Presentation `xml:"type,attr,omitempty"`
 	AvailabilityStartTime      string       `xml:"availabilityStartTime,attr,omitempty"`
 	AvailabilityEndTime        string       `xml:"availabilityEndTime,attr,omitempty"`
@@ -283,6 +302,10 @@ type Range struct {
 // Ratio must match the pattern `[0-9]*:[0-9]*`.
 type Ratio string
 
+type AudioChannelConfiguration string
+
+const DASH2011AudioChannelConfiguration AudioChannelConfiguration = "urn:mpeg:dash:23003:3:audio_channel_configuration:2011"
+
 type RepresentationBase struct {
 	Items                     []string      `xml:",any"`
 	FramePacking              []Descriptor  `xml:"FramePacking,omitempty"`
@@ -297,7 +320,7 @@ type RepresentationBase struct {
 	Sar                       Ratio         `xml:"sar,attr,omitempty"`
 	FrameRate                 FrameRate     `xml:"frameRate,attr,omitempty"`
 	AudioSamplingRate         string        `xml:"audioSamplingRate,attr,omitempty"`
-	MimeType                  string        `xml:"mimeType,attr,omitempty"`
+	MimeType                  MimeType      `xml:"mimeType,attr,omitempty"`
 	SegmentProfiles           string        `xml:"segmentProfiles,attr,omitempty"`
 	Codecs                    string        `xml:"codecs,attr,omitempty"`
 	MaximumSAPPeriod          float64       `xml:"maximumSAPPeriod,attr,omitempty"`
@@ -328,7 +351,7 @@ type Representation struct {
 	Sar                       Ratio           `xml:"sar,attr,omitempty"`
 	FrameRate                 FrameRate       `xml:"frameRate,attr,omitempty"`
 	AudioSamplingRate         string          `xml:"audioSamplingRate,attr,omitempty"`
-	MimeType                  string          `xml:"mimeType,attr,omitempty"`
+	MimeType                  MimeType        `xml:"mimeType,attr,omitempty"`
 	SegmentProfiles           string          `xml:"segmentProfiles,attr,omitempty"`
 	Codecs                    string          `xml:"codecs,attr,omitempty"`
 	MaximumSAPPeriod          float64         `xml:"maximumSAPPeriod,attr,omitempty"`
