@@ -107,6 +107,25 @@ func TestMPD_Read(t *testing.T) {
 	}
 }
 
+type NopReadCloser struct{}
+
+func (r NopReadCloser) Read(_ []byte) (n int, err error) {
+	return 0, errors.New("error")
+}
+
+func (r NopReadCloser) Close() error {
+	return nil
+}
+
+func TestMPD_Read_ErrReadMPD(t *testing.T) {
+	reader := NopReadCloser{}
+
+	var testMPD mpd.MPD
+	if err := testMPD.Read(reader); !errors.Is(err, mpd.ErrReadMPD) {
+		t.Error("unexpected error")
+	}
+}
+
 var exampleReader = mustOpenFixture("zencoder/segment_timeline_multi_period.mpd")
 
 func ExampleMPD_Read() {
