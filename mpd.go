@@ -104,13 +104,11 @@ type ContentComponent struct {
 }
 
 type Descriptor struct {
-	Items          []string `xml:",any"`
-	CENCPSSH       []string `xml:"urn:mpeg:cenc:2013 pssh,omitempty"`
-	CENCDefaultKID []string `xml:"urn:mpeg:cenc:2013 default_KID,attr,omitempty"`
-	// FIXME: MSPRPro doesn't work properly
-	MSPRPro     []string    `xml:"urn:microsoft:playready pro,attr,omitempty"`
-	SchemeIdURI SchemeIdURI `xml:"schemeIdUri,attr"`
-	Value       string      `xml:"value,attr,omitempty"`
+	Items          []string    `xml:",any"`
+	CENCPSSH       []string    `xml:"urn:mpeg:cenc:2013 pssh,omitempty"`
+	CENCDefaultKID []string    `xml:"urn:mpeg:cenc:2013 default_KID,attr,omitempty"`
+	SchemeIdURI    SchemeIdURI `xml:"schemeIdUri,attr"`
+	Value          string      `xml:"value,attr,omitempty"`
 }
 
 type SchemeIdURI string
