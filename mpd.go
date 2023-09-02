@@ -30,7 +30,6 @@ type AdaptationSet struct {
 	ContentComponent          []ContentComponent `xml:"ContentComponent,omitempty"`
 	BaseURL                   []BaseURL          `xml:"BaseURL,omitempty"`
 	Representation            []Representation   `xml:"Representation,omitempty"`
-	Actuate                   string             `xml:"actuate,attr,omitempty"`
 	Group                     uint               `xml:"group,attr,omitempty"`
 	Lang                      string             `xml:"lang,attr,omitempty"`
 	ContentType               ContentType        `xml:"contentType,attr,omitempty"`
@@ -43,8 +42,8 @@ type AdaptationSet struct {
 	MaxHeight                 uint               `xml:"maxHeight,attr,omitempty"`
 	MinFrameRate              FrameRate          `xml:"minFrameRate,attr,omitempty"`
 	MaxFrameRate              FrameRate          `xml:"maxFrameRate,attr,omitempty"`
-	SegmentAlignment          ConditionalUint    `xml:"segmentAlignment,attr,omitempty"`
-	SubsegmentAlignment       ConditionalUint    `xml:"subsegmentAlignment,attr,omitempty"`
+	SegmentAlignment          bool               `xml:"segmentAlignment,attr,omitempty"`
+	SubsegmentAlignment       bool               `xml:"subsegmentAlignment,attr,omitempty"`
 	SubsegmentStartsWithSAP   uint               `xml:"subsegmentStartsWithSAP,attr,omitempty"`
 	Profiles                  string             `xml:"profiles,attr,omitempty"`
 	Width                     uint               `xml:"width,attr,omitempty"`
@@ -62,26 +61,6 @@ type AdaptationSet struct {
 	ScanType                  VideoScan          `xml:"scanType,attr,omitempty"`
 }
 
-func (a *AdaptationSet) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	type T AdaptationSet
-
-	var overlay struct {
-		*T
-		Actuate                 *string          `xml:"actuate,attr,omitempty"`
-		SegmentAlignment        *ConditionalUint `xml:"segmentAlignment,attr,omitempty"`
-		SubsegmentAlignment     *ConditionalUint `xml:"subsegmentAlignment,attr,omitempty"`
-		SubsegmentStartsWithSAP *uint            `xml:"subsegmentStartsWithSAP,attr,omitempty"`
-	}
-
-	overlay.T = (*T)(a)
-	overlay.Actuate = &overlay.T.Actuate
-	overlay.SegmentAlignment = &overlay.T.SegmentAlignment
-	overlay.SubsegmentAlignment = &overlay.T.SubsegmentAlignment
-	overlay.SubsegmentStartsWithSAP = &overlay.T.SubsegmentStartsWithSAP
-
-	return d.DecodeElement(&overlay, &start)
-}
-
 type BaseURL struct {
 	Value                    string  `xml:",chardata"`
 	ServiceLocation          string  `xml:"serviceLocation,attr,omitempty"`
@@ -89,8 +68,6 @@ type BaseURL struct {
 	AvailabilityTimeOffset   float64 `xml:"availabilityTimeOffset,attr,omitempty"`
 	AvailabilityTimeComplete bool    `xml:"availabilityTimeComplete,attr,omitempty"`
 }
-
-type ConditionalUint string
 
 type ContentComponent struct {
 	Items         []string     `xml:",any"`
@@ -118,24 +95,9 @@ const AudioChannelConfigurationSchemeIdURI SchemeIdURI = "urn:mpeg:dash:23003:3:
 type EventStream struct {
 	Items       []string    `xml:",any"`
 	Event       []Event     `xml:"Event,omitempty"`
-	Actuate     string      `xml:"actuate,attr,omitempty"`
 	SchemeIdURI SchemeIdURI `xml:"schemeIdUri,attr"`
 	Value       string      `xml:"value,attr,omitempty"`
 	Timescale   uint        `xml:"timescale,attr,omitempty"`
-}
-
-func (e *EventStream) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	type T EventStream
-
-	var overlay struct {
-		*T
-		Actuate *string `xml:"actuate,attr,omitempty"`
-	}
-
-	overlay.T = (*T)(e)
-	overlay.Actuate = &overlay.T.Actuate
-
-	return d.DecodeElement(&overlay, &start)
 }
 
 type Event struct {
@@ -146,20 +108,6 @@ type Event struct {
 	PresentationTime uint64         `xml:"presentationTime,attr,omitempty"`
 	Duration         uint64         `xml:"duration,attr,omitempty"`
 	MessageData      string         `xml:"messageData,attr,omitempty"`
-}
-
-func (e *Event) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	type T Event
-
-	var overlay struct {
-		*T
-		PresentationTime *uint64 `xml:"presentationTime,attr,omitempty"`
-	}
-
-	overlay.T = (*T)(e)
-	overlay.PresentationTime = &overlay.T.PresentationTime
-
-	return d.DecodeElement(&overlay, &start)
 }
 
 type SCTE35Signal struct {
@@ -235,20 +183,6 @@ func (m *MPD) Bytes() ([]byte, error) {
 	return append([]byte(xml.Header), xmlData...), nil
 }
 
-func (m *MPD) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	type T MPD
-
-	var overlay struct {
-		*T
-		Type *Presentation `xml:"type,attr,omitempty"`
-	}
-
-	overlay.T = (*T)(m)
-	overlay.Type = &overlay.T.Type
-
-	return d.DecodeElement(&overlay, &start)
-}
-
 type Metrics struct {
 	Items     []string     `xml:",any"`
 	Reporting []Descriptor `xml:"Reporting"`
@@ -274,22 +208,6 @@ type Period struct {
 	Start              string          `xml:"start,attr,omitempty"`
 	Duration           string          `xml:"duration,attr,omitempty"`
 	BitstreamSwitching bool            `xml:"bitstreamSwitching,attr,omitempty"`
-}
-
-func (p *Period) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	type T Period
-
-	var overlay struct {
-		*T
-		Actuate            *string `xml:"actuate,attr,omitempty"`
-		BitstreamSwitching *bool   `xml:"bitstreamSwitching,attr,omitempty"`
-	}
-
-	overlay.T = (*T)(p)
-	overlay.Actuate = &overlay.T.Actuate
-	overlay.BitstreamSwitching = &overlay.T.BitstreamSwitching
-
-	return d.DecodeElement(&overlay, &start)
 }
 
 type Presentation string
@@ -373,20 +291,6 @@ type S struct {
 	R int     `xml:"r,attr,omitempty"`
 }
 
-func (s *S) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	type T S
-
-	var overlay struct {
-		*T
-		R *int `xml:"r,attr,omitempty"`
-	}
-
-	overlay.T = (*T)(s)
-	overlay.R = &overlay.T.R
-
-	return d.DecodeElement(&overlay, &start)
-}
-
 type SegmentBase struct {
 	Items                    []string `xml:",any"`
 	Initialization           URL      `xml:"Initialization,omitempty"`
@@ -397,20 +301,6 @@ type SegmentBase struct {
 	IndexRangeExact          bool     `xml:"indexRangeExact,attr,omitempty"`
 	AvailabilityTimeOffset   float64  `xml:"availabilityTimeOffset,attr,omitempty"`
 	AvailabilityTimeComplete bool     `xml:"availabilityTimeComplete,attr,omitempty"`
-}
-
-func (s *SegmentBase) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	type T SegmentBase
-
-	var overlay struct {
-		*T
-		IndexRangeExact *bool `xml:"indexRangeExact,attr,omitempty"`
-	}
-
-	overlay.T = (*T)(s)
-	overlay.IndexRangeExact = &overlay.T.IndexRangeExact
-
-	return d.DecodeElement(&overlay, &start)
 }
 
 type SegmentList struct {
@@ -430,22 +320,6 @@ type SegmentList struct {
 	AvailabilityTimeComplete bool            `xml:"availabilityTimeComplete,attr,omitempty"`
 }
 
-func (s *SegmentList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	type T SegmentList
-
-	var overlay struct {
-		*T
-		Actuate         *string `xml:"actuate,attr,omitempty"`
-		IndexRangeExact *bool   `xml:"indexRangeExact,attr,omitempty"`
-	}
-
-	overlay.T = (*T)(s)
-	overlay.Actuate = &overlay.T.Actuate
-	overlay.IndexRangeExact = &overlay.T.IndexRangeExact
-
-	return d.DecodeElement(&overlay, &start)
-}
-
 type SegmentTemplate struct {
 	Items                    []string        `xml:",any"`
 	SegmentTimeline          SegmentTimeline `xml:"SegmentTimeline,omitempty"`
@@ -461,20 +335,6 @@ type SegmentTemplate struct {
 	IndexRangeExact          bool            `xml:"indexRangeExact,attr,omitempty"`
 	AvailabilityTimeOffset   float64         `xml:"availabilityTimeOffset,attr,omitempty"`
 	AvailabilityTimeComplete bool            `xml:"availabilityTimeComplete,attr,omitempty"`
-}
-
-func (s *SegmentTemplate) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	type T SegmentTemplate
-
-	var overlay struct {
-		*T
-		IndexRangeExact *bool `xml:"indexRangeExact,attr,omitempty"`
-	}
-
-	overlay.T = (*T)(s)
-	overlay.IndexRangeExact = &overlay.T.IndexRangeExact
-
-	return d.DecodeElement(&overlay, &start)
 }
 
 type SegmentTimeline struct {
