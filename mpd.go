@@ -1,7 +1,6 @@
 package mpd
 
 import (
-	"bytes"
 	"encoding/xml"
 	"errors"
 	"io"
@@ -346,24 +345,6 @@ type SegmentTimeline struct {
 type StringNoWhitespace string
 
 type StringVector []string
-
-func (s *StringVector) MarshalText() ([]byte, error) {
-	result := make([][]byte, 0, len(*s))
-
-	for _, v := range *s {
-		result = append(result, []byte(v))
-	}
-
-	return bytes.Join(result, []byte(" ")), nil
-}
-
-func (s *StringVector) UnmarshalText(text []byte) error {
-	for _, v := range bytes.Fields(text) {
-		*s = append(*s, string(v))
-	}
-
-	return nil
-}
 
 type URL struct {
 	Items     []string `xml:",any"`
