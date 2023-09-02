@@ -187,8 +187,8 @@ type MPD struct {
 	MaxSubsegmentDuration      string       `xml:"maxSubsegmentDuration,attr,omitempty"`
 }
 
-func (m *MPD) Read(reader io.ReadCloser, inputLimit int64) error {
-	body, err := io.ReadAll(io.LimitReader(reader, inputLimit))
+func (m *MPD) Read(reader io.ReadCloser) error {
+	body, err := io.ReadAll(reader)
 	if err != nil {
 		return err
 	}
