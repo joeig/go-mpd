@@ -3,6 +3,7 @@ package mpd
 import (
 	"bytes"
 	"encoding/xml"
+	"errors"
 	"io"
 )
 
@@ -206,16 +207,22 @@ type MPD struct {
 	MaxSubsegmentDuration      string       `xml:"maxSubsegmentDuration,attr,omitempty"`
 }
 
+var (
+	ErrReadMPD      = errors.New("cannot read MPD")
+	ErrUnmarshalMPD = errors.New("cannot unmarshal MPD")
+	ErrMarshalMPD   = errors.New("cannot marshal MPD")
+)
+
 func (m *MPD) Read(reader io.ReadCloser) error {
 	body, err := io.ReadAll(reader)
 	if err != nil {
-		return err
+		return errors.Join(ErrReadMPD, err)
 	}
 
 	_ = reader.Close()
 
 	if err := xml.Unmarshal(body, m); err != nil {
-		return err
+		return errors.Join(ErrUnmarshalMPD, err)
 	}
 
 	return nil
@@ -224,7 +231,7 @@ func (m *MPD) Read(reader io.ReadCloser) error {
 func (m *MPD) Bytes() ([]byte, error) {
 	xmlData, err := xml.MarshalIndent(m, "", "  ")
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(ErrMarshalMPD, err)
 	}
 
 	return append([]byte(xml.Header), xmlData...), nil
