@@ -2,6 +2,6 @@
 profile: ./coverage.out
 threshold:
   # Note: Update README.md in case thresholds change.
-  file: 90
-  package: 90
-  total: 90
+  file: 92
+  package: 92
+  total: 92
