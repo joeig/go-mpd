@@ -2,7 +2,7 @@ GOCMD=go
 GOTEST=$(GOCMD) test
 GOCOVER=$(GOCMD) tool cover
 GOFMT=gofmt
-GOFILES=$(shell find . -type f -name '*.go' -not -path "./vendor/*")
+GOFILES=$(shell find . -type f -name '*.go')
 
 .DEFAULT_GOAL := all
 

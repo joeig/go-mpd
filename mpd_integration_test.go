@@ -2,10 +2,10 @@ package mpd_test
 
 import (
 	"aqwari.net/xml/xmltree"
-	"encoding/xml"
 	"errors"
 	"github.com/google/go-cmp/cmp"
 	"go.eigsys.de/go-mpd"
+	"go.eigsys.de/go-mpd/third_party/encoding/xml"
 	"io"
 	"log"
 	"os"

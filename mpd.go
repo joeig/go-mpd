@@ -2,8 +2,8 @@
 package mpd
 
 import (
-	"encoding/xml"
 	"errors"
+	"go.eigsys.de/go-mpd/third_party/encoding/xml"
 	"io"
 )
 
