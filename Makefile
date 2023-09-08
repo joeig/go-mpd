@@ -11,7 +11,7 @@ all: check-fmt test coverage
 
 .PHONY: test
 test:
-	$(GOTEST) -v ./... -coverprofile=./coverage.out
+	$(GOTEST) -v -coverprofile=./coverage.out ./
 
 .PHONY: coverage
 coverage:
