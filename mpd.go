@@ -165,6 +165,18 @@ const (
 	FullyOrdered                 PreselectionOrder = "fully-ordered"
 )
 
+type XLinkActuate string
+
+const OnRequestXLinkActuate XLinkActuate = "onRequest"
+
+type XLinkType string
+
+const SimpleXLinkType XLinkType = "simple"
+
+type XLinkShow string
+
+const EmbedXLinkShow XLinkShow = "embed"
+
 var (
 	ErrReadMPD      = errors.New("cannot read MPD")
 	ErrUnmarshalMPD = errors.New("cannot unmarshal MPD")
@@ -184,19 +196,30 @@ type AdaptationSet struct {
 	SegmentList      *SegmentList       `xml:"SegmentList,omitempty"`
 	SegmentTemplate  *SegmentTemplate   `xml:"SegmentTemplate,omitempty"`
 	Representation   []Representation   `xml:"Representation,omitempty"`
-	ID               uint               `xml:"id,attr,omitempty"`
-	Group            uint               `xml:"group,attr,omitempty"`
-	Lang             string             `xml:"lang,attr,omitempty"`
-	ContentType      ContentType        `xml:"contentType,attr,omitempty"`
-	PAR              Ratio              `xml:"par,attr,omitempty"`
-	MinBandwidth     uint               `xml:"minBandwidth,attr,omitempty"`
-	MaxBandwidth     uint               `xml:"maxBandwidth,attr,omitempty"`
-	MinWidth         uint               `xml:"minWidth,attr,omitempty"`
-	MaxWidth         uint               `xml:"maxWidth,attr,omitempty"`
-	MinHeight        uint               `xml:"minHeight,attr,omitempty"`
-	MaxHeight        uint               `xml:"maxHeight,attr,omitempty"`
-	MinFrameRate     FrameRate          `xml:"minFrameRate,attr,omitempty"`
-	MaxFrameRate     FrameRate          `xml:"maxFrameRate,attr,omitempty"`
+	XLinkHref        string             `xml:"http://www.w3.org/1999/xlink xlink:href,attr,omitempty"`
+
+	// XLinkActuate defaults to OnRequestXLinkActuate.
+	XLinkActuate XLinkActuate `xml:"http://www.w3.org/1999/xlink xlink:actuate,attr,omitempty"`
+
+	// XLinkType must be SimpleXLinkType.
+	XLinkType XLinkType `xml:"http://www.w3.org/1999/xlink xlink:type,attr,omitempty"`
+
+	// XLinkShow must be EmbedXLinkShow.
+	XLinkShow XLinkShow `xml:"http://www.w3.org/1999/xlink xlink:show,attr,omitempty"`
+
+	ID           uint        `xml:"id,attr,omitempty"`
+	Group        uint        `xml:"group,attr,omitempty"`
+	Lang         string      `xml:"lang,attr,omitempty"`
+	ContentType  ContentType `xml:"contentType,attr,omitempty"`
+	PAR          Ratio       `xml:"par,attr,omitempty"`
+	MinBandwidth uint        `xml:"minBandwidth,attr,omitempty"`
+	MaxBandwidth uint        `xml:"maxBandwidth,attr,omitempty"`
+	MinWidth     uint        `xml:"minWidth,attr,omitempty"`
+	MaxWidth     uint        `xml:"maxWidth,attr,omitempty"`
+	MinHeight    uint        `xml:"minHeight,attr,omitempty"`
+	MaxHeight    uint        `xml:"maxHeight,attr,omitempty"`
+	MinFrameRate FrameRate   `xml:"minFrameRate,attr,omitempty"`
+	MaxFrameRate FrameRate   `xml:"maxFrameRate,attr,omitempty"`
 
 	// SegmentAlignment defaults to `false`.
 	SegmentAlignment bool `xml:"segmentAlignment,attr,omitempty"`
@@ -243,8 +266,19 @@ type Descriptor struct {
 }
 
 type EventStream struct {
-	Items       []string    `xml:",any"`
-	Event       []Event     `xml:"Event,omitempty"`
+	Items     []string `xml:",any"`
+	Event     []Event  `xml:"Event,omitempty"`
+	XLinkHref string   `xml:"http://www.w3.org/1999/xlink xlink:href,attr,omitempty"`
+
+	// XLinkActuate defaults to OnRequestXLinkActuate.
+	XLinkActuate XLinkActuate `xml:"http://www.w3.org/1999/xlink xlink:actuate,attr,omitempty"`
+
+	// XLinkType must be SimpleXLinkType.
+	XLinkType XLinkType `xml:"http://www.w3.org/1999/xlink xlink:type,attr,omitempty"`
+
+	// XLinkShow must be EmbedXLinkShow.
+	XLinkShow XLinkShow `xml:"http://www.w3.org/1999/xlink xlink:show,attr,omitempty"`
+
 	SchemeIdURI SchemeIDURI `xml:"schemeIdUri,attr"`
 	Value       string      `xml:"value,attr,omitempty"`
 	Timescale   uint        `xml:"timescale,attr,omitempty"`
@@ -364,7 +398,15 @@ type InitializationSet struct {
 	Role          []Descriptor `xml:"Role,omitempty"`
 	Rating        []Descriptor `xml:"Rating,omitempty"`
 	Viewpoint     []Descriptor `xml:"Viewpoint,omitempty"`
-	ID            uint         `xml:"id,attr"`
+	XLinkHref     string       `xml:"http://www.w3.org/1999/xlink xlink:href,attr,omitempty"`
+
+	// XLinkActuate defaults to OnRequestXLinkActuate.
+	XLinkActuate XLinkActuate `xml:"http://www.w3.org/1999/xlink xlink:actuate,attr,omitempty"`
+
+	// XLinkType must be SimpleXLinkType.
+	XLinkType XLinkType `xml:"http://www.w3.org/1999/xlink xlink:type,attr,omitempty"`
+
+	ID uint `xml:"id,attr"`
 
 	// InAllPeriods defaults to `true`.
 	InAllPeriods bool `xml:"inAllPeriods,attr,omitempty"`
@@ -458,10 +500,21 @@ type Period struct {
 	EmptyAdaptationSet   []AdaptationSet      `xml:"EmptyAdaptationSet,omitempty"`
 	GroupLabel           []Label              `xml:"GroupLabel,omitempty"`
 	Preselection         []Preselection       `xml:"Preselection,omitempty"`
-	ID                   string               `xml:"id,attr,omitempty"`
-	Actuate              string               `xml:"actuate,attr,omitempty"`
-	Start                string               `xml:"start,attr,omitempty"`
-	Duration             string               `xml:"duration,attr,omitempty"`
+	XLinkHref            string               `xml:"http://www.w3.org/1999/xlink xlink:href,attr,omitempty"`
+
+	// XLinkActuate defaults to OnRequestXLinkActuate.
+	XLinkActuate XLinkActuate `xml:"http://www.w3.org/1999/xlink xlink:actuate,attr,omitempty"`
+
+	// XLinkType must be SimpleXLinkType.
+	XLinkType XLinkType `xml:"http://www.w3.org/1999/xlink xlink:type,attr,omitempty"`
+
+	// XLinkShow must be EmbedXLinkShow.
+	XLinkShow XLinkShow `xml:"http://www.w3.org/1999/xlink xlink:show,attr,omitempty"`
+
+	ID       string `xml:"id,attr,omitempty"`
+	Actuate  string `xml:"actuate,attr,omitempty"`
+	Start    string `xml:"start,attr,omitempty"`
+	Duration string `xml:"duration,attr,omitempty"`
 
 	// BitstreamSwitching defaults to `false`.
 	BitstreamSwitching bool `xml:"bitstreamSwitching,attr,omitempty"`
@@ -712,6 +765,16 @@ type SegmentList struct {
 
 	Items      []string     `xml:",any"`
 	SegmentURL []SegmentURL `xml:"SegmentURL,omitempty"`
+	XLinkHref  string       `xml:"http://www.w3.org/1999/xlink xlink:href,attr,omitempty"`
+
+	// XLinkActuate defaults to OnRequestXLinkActuate.
+	XLinkActuate XLinkActuate `xml:"http://www.w3.org/1999/xlink xlink:actuate,attr,omitempty"`
+
+	// XLinkType must be SimpleXLinkType.
+	XLinkType XLinkType `xml:"http://www.w3.org/1999/xlink xlink:type,attr,omitempty"`
+
+	// XLinkShow must be EmbedXLinkShow.
+	XLinkShow XLinkShow `xml:"http://www.w3.org/1999/xlink xlink:show,attr,omitempty"`
 }
 
 type SegmentURL struct {
